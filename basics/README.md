@@ -3,7 +3,8 @@ To the roots!
 
 ### Basic Types
 Best source to gain some knowledge on basic types is https://tour.golang.org/basics/1 
-So Go's basic types are
+
+So Go's basic types are:
 ```
 bool
 
