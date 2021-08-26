@@ -4,8 +4,9 @@ This repository will contain education materials which were used by me to learn 
 [golang basics](### Golang Basics)
 
 ### Golang Basics
-All code examples will be placed under nested directory basics. 
-`Topics which should be covered:`
+All code examples will be placed under nested directory `basics`. 
+
+#### Topics which should be covered:
 * Golangs basic types 
 * Constants 
 
