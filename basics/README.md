@@ -1,10 +1,10 @@
 # Golang Basics
 To the roots! 
 
-### Basic Types
+## Basic Types
 Best source to gain some knowledge on basic types is https://tour.golang.org/basics/1 
 
-So Go's basic types are:
+#### So Go's basic types are:
 ```
 bool
 
@@ -38,7 +38,7 @@ As a strictly typed language, Go has a rich type system with a multitude of type
 ./variables.go:16:7: invalid operation: w == i (mismatched types int32 and int)
 ```
 
-Constants:
+#### Constants:
 Constants can be `untyped`. This can be useful when working with numbers such as integer-type data. If the constant is untyped, it is explicitly converted, where typed constants are not.
 
 Let's refer to code example `constants.go`:
