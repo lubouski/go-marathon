@@ -46,4 +46,27 @@ If you declare a constant with a type, it will be that exact type. Here when we 
 
 When hours was defined, it inferred that it was of type int because we did not explicitly give it a type, hours := 24. When we declared minutes, we explicitly declared it as an int32, minutes := int32(60). 
 
+#### Defer:
+A defer statement defers the execution of a function until the surrounding function returns.
 
+The deferred call's arguments are evaluated immediately, but the function call is not executed until the surrounding function returns.
+
+> Stacking `defers`
+Deferred function calls are pushed onto a stack. When a function returns, its deferred calls are executed in last-in-first-out order.
+```
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("counting")
+
+	for i := 0; i < 10; i++ {
+		defer fmt.Println(i)
+	}
+
+	fmt.Println("done")
+}
+
+```
+Output: counting -> done -> 9 -> 8 -> 7 ... etc
