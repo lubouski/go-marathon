@@ -43,7 +43,7 @@ Built-in **make** function could create a slice with capacity and length which w
 ```
 In this case, we have a non-nil slice with a lenght of 0, but a capacity of 10. Slice the lenght is 0, we can't directly index into it, but we can append values to it.
 
-####**copy**
+####copy
 If you need to create a slice that's independent of the original, use the built-in copy function.
 ```
   x := []int{1, 2, 3, 4}
