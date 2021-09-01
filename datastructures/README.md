@@ -85,4 +85,11 @@ And non empty map.
   }
 ```
 
+Maps are like slices in several ways:
+* Maps automatically grow as you add key-value pairs to them.
+* If you know how many key-value pairs you plan to insert into a map, you can use **make** to create a map with a specific initial size.
+* Passing a map to the **len** function tells you the number of key-value pairs in a map.
+* The zero value for a map is **nil**
+* Maps are not comparable. You can check if they are equal to nil.
+* The key for a map can be any comparable type. This means you cannot use a slice or a map as the key for a map.
 
