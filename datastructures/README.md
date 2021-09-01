@@ -65,5 +65,24 @@ The **copy** function allows you to copy between two slices that cover overlappi
 ```
 In this case we are copyinh the last three values in x on top of the first three values of x, This prints out [2 3 4 4] 3.
 
+### Maps
+The map type is written as map[keyType]valueType. 
+Let's take a look at a few ways to declare maps.
+Declare a nilMap, the zero value for a map is **nil**.
+```
+  var nilMap map[string]int
+```
+We can use an empty map literal this is not the same as a nil map. It has a lenght of 0 but you can read and write to a map assigned an empty map literal.
+```
+  totalWins := map[string]int{}
+```
+And non empty map.
+```
+  teams := map[string][]string {
+    "Orcas": []string{"Fred", "Ralph", "Bijou"},
+    "Lions": []string{"Sarah", "Peter", "Billie"},
+    "Kittens": []string{"Waldo", "Raul", "Ze"},
+  }
+```
 
 
