@@ -4,7 +4,13 @@ This repository will contain education materials which were used by me to learn 
 ### Golang Basics
 All code examples will be placed under nested directory `basics`. 
 
-#### Topics which should be covered:
 * Golangs basic types 
 * Constants 
 
+### Data Structures Arrays & Slices & Maps
+Code examples are placed under `datastructures` directory.
+
+* Arrays 
+* Slices
+* Maps
+* HackerRank Examples
