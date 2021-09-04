@@ -14,4 +14,15 @@ Go allows you to pass a string to the built-in `len` function to find the length
   fmt.Pringln(len(s))
 ```
 
+#### strings & strconv Packages
+Package `strings` contains function TrimSpace which could delete every space symbols (new line, tabs, spaces)
+```
+  s := "\t formerly surrounded by space \n"
+  fmt.Println(strings.TrimSpace(s))
+```
+We could convert string into float64 type
+```
+  input = strings.TrimSpace(input)
+  x, err := strconv.ParseFloat(input, 64)
+```
 
