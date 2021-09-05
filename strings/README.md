@@ -25,4 +25,20 @@ We could convert string into float64 type
   input = strings.TrimSpace(input)
   x, err := strconv.ParseFloat(input, 64)
 ```
-
+#### Labeling Your FOR Statements
+By default, the `break` and `continue` keywords apply to the loop that directly contains them. What if you have nested for loops and you want to exit or skip over an iterator of an outer loop? Let's look at an example. We're going to modify our string and stop iterating through a string as soon as it hits a terre "l"
+```
+func main() {
+	samples := []string{"hello", "apple_n!"}
+outer:
+	for _, sample := range samples {
+		for i, r := range sample {
+			fmt.Println(i, r, string(r))
+			if r == 'l' {
+				continue outer
+			}
+		}
+		fmt.Println()
+	}
+}
+```
