@@ -30,8 +30,8 @@ func (f *File) SetPath(path string) error {
 		case string(l) == "\"":
 			return errors.New("invalid linux filename provided with symbol \"")
 		}
-		f.path = path
 	}
+	f.path = path
 	return nil
 }
 
