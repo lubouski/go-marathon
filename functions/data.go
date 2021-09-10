@@ -68,6 +68,12 @@ func (f *File) List(path string) {
 	}
 }
 
+func (f *File) Get(path string) {
+	dat, err := os.ReadFile(path)
+	checkErr(err)
+	fmt.Print(string(dat))
+}
+
 func main() {
 	files := File{}
 	err := files.SetPath("/tmp/golang-test-file.txt")
@@ -76,4 +82,5 @@ func main() {
 	fmt.Println("File path:", files.Path(), "File data:", files.Data())
 	files.Put(files.Path(), files.Data())
 	files.List(files.Path())
+	files.Get(files.Path())
 }
