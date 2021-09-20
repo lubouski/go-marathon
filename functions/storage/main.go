@@ -1,28 +1,39 @@
 package main
 
 import (
-	"log"
+	"bufio"
 	"fmt"
+	"log"
+	"strings"
+	"os"
 )
 
+
 func main() {
-	linux, _ := getStorageKind("linux")
-	cloud, _ := getStorageKind("cloud")
 
-	setStorage(linux, "/tmp/", "my-test-golang.txt", "secret data for cloud")
-	putStorage(linux)
+	fmt.Println("Pleae enter five parameters according to README:")
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+	input = strings.TrimSpace(input)
+	param := strings.Split(input, " ")
 
-	setStorage(cloud, "lubouski-golang", "golang-test.txt", "/tmp/my-test-golang.txt")
-	putStorage(cloud)
+	storage, _ := getStorageKind(param[0])
 
-	listStorage(linux)
-	listStorage(cloud)
+        setStorage(storage, param[1], param[2], param[3])
 
-	getStorage(linux)
-	getStorage(cloud)
-
-	deleteStorage(linux)
-	deleteStorage(cloud)
+	switch {
+	case param[4] == "put":
+		putStorage(storage)
+	case param[4] == "get":
+		getStorage(storage)
+	case param[4] == "list":
+		listStorage(storage)
+	case param[4] == "delete":
+		deleteStorage(storage)
+	}
 }
 
 func setStorage(s Storage, path string, file string, data string) {
