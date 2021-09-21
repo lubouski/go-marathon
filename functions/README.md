@@ -45,7 +45,9 @@ Calling our function looks like this:
     fmt.Println(result, remainder)
   }
 ```
-
+#### Defined Type
+Defined type supports the same operators which base type supports. 
+i.e (+, -, \*, /, ==, >, <)
 
 
 
