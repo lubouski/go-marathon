@@ -15,17 +15,17 @@ This command will produce binary with a name `storage`
 Storage binary is a command line utility. So we need to provide string arguments to it in a appropriate order.
 Example for Linux FS:
 ```
-$ ./storage linux /tmp/ my-test-golang.txt secret put
+$ ./storage -provider linux -path /tmp/ -file "my-test-golang.txt" -data "secret data" -command put
 ```
 Example for Cloud GCP:
 ```
-./storage cloud bucket-golang my-test-golang.txt /tmp/my-test-golang.txt put
+./storage -provider cloud -path "bucket-golang" -file "my-test-golang.txt" -data "/tmp/my-test-golang.txt" - command put
 ```
-* argument[0] : this is cloud or linux platform
-* argument[1] : directory for linux or storage bucket for cloud
-* argument[2] : filename or object name
-* argument[3] : one word data which will be written to a linux file or filename which will be upploaded to the Cloud
-* argument[4] : put get list delete - this are four commands to work with Linux FS or Cloud Storage
+* provider : this is cloud or linux platform
+* path : directory for linux or storage bucket for cloud
+* file : filename or object name
+* data : one word data which will be written to a linux file or filename which will be upploaded to the Cloud
+* command : put get list delete - this are four commands to work with Linux FS or Cloud Storage
 
 ### Limitations
 Fourth parameter for linux is limited with one word due to internal implementation constraints.   

@@ -1,37 +1,38 @@
 package main
 
 import (
-	"bufio"
+	"flag"
 	"fmt"
 	"log"
-	"strings"
-	"os"
 )
 
 
 func main() {
+	var provider string
+	var path string
+	var file string
+	var data string
+	var command string
 
-	fmt.Println("Pleae enter five parameters according to README:")
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		log.Fatal(err)
-	}
-	input = strings.TrimSpace(input)
-	param := strings.Split(input, " ")
+	flag.StringVar(&provider, "provider", "cloud", "storage provider")
+	flag.StringVar(&path, "path", "/tmp", "path or bucket")
+	flag.StringVar(&file, "file", "test.txt", "file name")
+	flag.StringVar(&data, "data", "secret", "data or file to upload to cloud")
+	flag.StringVar(&command, "command", "get", "get,put, list or delete command")
+	flag.Parse()
 
-	storage, _ := getStorageKind(param[0])
+	storage, _ := getStorageKind(provider)
 
-        setStorage(storage, param[1], param[2], param[3])
+        setStorage(storage, path, file, data)
 
 	switch {
-	case param[4] == "put":
+	case command == "put":
 		putStorage(storage)
-	case param[4] == "get":
+	case command == "get":
 		getStorage(storage)
-	case param[4] == "list":
+	case command == "list":
 		listStorage(storage)
-	case param[4] == "delete":
+	case command == "delete":
 		deleteStorage(storage)
 	}
 }
