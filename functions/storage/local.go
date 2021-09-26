@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,98 +14,50 @@ type Local struct {
 	data string
 }
 
-func (f *Local) SetPath(path string) error {
-	for _, l := range path {
-		switch {
-		case string(l) == "*":
-			return errors.New("invalid linux path provided with symbol *")
-		case string(l) == "?":
-			return errors.New("invalid linux pfth provided with symbol ?")
-		case string(l) == "\"":
-			return errors.New("invalid linux path provided with symbol \"")
-		}
-	}
-	f.path = path
-	return nil
-}
-
-func (f *Local) SetFile(file string) error {
-        for _, l := range file {
-                switch {
-                case string(l) == "*":
-                        return errors.New("invalid linux filename provided with symbol *")
-                case string(l) == "?":
-                        return errors.New("invalid linux filename provided with symbol ?")
-                case string(l) == "\"":
-                        return errors.New("invalid linux filename provided with symbol \"")
-                case string(l) == "/":
-                        return errors.New("invalid linux filename provided with symbol /")
-                }
-        }
-        f.file = file
-        return nil
-}
-
-func (f *Local) SetData(data string) {
-	f.data = data
-}
-
-func (f Local) GetPath() string {
-	return f.path
-}
-
-func (f Local) GetFile() string {
-        return f.file
-}
-
-func (f Local) GetData() string {
-	return f.data
-}
-
-func (f Local) Put(path, file, data string) error {
-	object, err := os.Create(path + file)
+func (f Local) Put() error {
+	object, err := os.Create(f.path + f.file)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer object.Close()
 
-	byteData := []byte(data)
+	byteData := []byte(f.data)
 	_, err = object.Write(byteData)
-	fmt.Printf("%s created\n", path + file)
+	fmt.Printf("%s created\n", f.path + f.file)
 	fmt.Println("--------------------------------")
 	return err
 }
 
-func (f Local) List(path string) {
-	dir := filepath.Dir(path)
+func (f Local) List() {
+	dir := filepath.Dir(f.path)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("List of files at %s\n", path)
+	fmt.Printf("List of files at %s\n", f.path)
 	fmt.Println("--------------------------------")
 	for _, file := range files {
 		fmt.Println(file.Name())
 	}
 }
 
-func (f Local) Get(path, file string) ([]byte, error) {
-	dat, err := os.ReadFile(path + file)
+func (f Local) Get() ([]byte, error) {
+	dat, err := os.ReadFile(f.path + f.file)
 	return dat, err
 }
 
-func (f Local) Delete(path, file string) error {
-	err := os.Remove(path + file) // remove a single file
-	fmt.Printf("%s deleted at dir %s\n", file, path)
+func (f Local) Delete() error {
+	err := os.Remove(f.path + f.file) // remove a single file
+	fmt.Printf("%s deleted at dir %s\n", f.file, f.path)
 	fmt.Println("--------------------------------")
 	return err
 }
 
-func newLocal() Storage {
+func newLocal(path, file, data string) Storage {
 	return &Local{
-		path: "/tmp/",
-		file: "golang-test-filename.txt",
-		data: "my random data to a file",
+		path: path,
+		file: file,
+		data: data,
 	}
 }

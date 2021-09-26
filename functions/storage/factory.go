@@ -2,12 +2,12 @@ package main
 
 import "fmt"
 
-func getStorageKind(storage string) (Storage, error) {
+func getStorageKind(storage, path, file, data string) (Storage, error) {
 	if storage == "linux" {
-		return newLocal(), nil
+		return newLocal(path, file, data), nil
 	}
         if storage == "cloud" {
-                return newCloud(), nil
+                return newCloud(path, file, data), nil
         }
 	return nil, fmt.Errorf("Wrong storage type passed")
 }

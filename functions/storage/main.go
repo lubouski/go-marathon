@@ -21,9 +21,7 @@ func main() {
 	flag.StringVar(&command, "command", "get", "get,put, list or delete command")
 	flag.Parse()
 
-	storage, _ := getStorageKind(provider)
-
-        setStorage(storage, path, file, data)
+	storage, _ := getStorageKind(provider, path, file, data)
 
 	switch {
 	case command == "put":
@@ -37,31 +35,19 @@ func main() {
 	}
 }
 
-func setStorage(s Storage, path string, file string, data string) {
-	err := s.SetPath(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = s.SetFile(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-	s.SetData(data)
-}
-
 func putStorage(s Storage) {
-	err := s.Put(s.GetPath(), s.GetFile(), s.GetData())
+	err := s.Put()
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func listStorage(s Storage) {
-	s.List(s.GetPath())
+	s.List()
 }
 
 func getStorage(s Storage) {
-	data, err := s.Get(s.GetPath(), s.GetFile())
+	data, err := s.Get()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,7 +55,7 @@ func getStorage(s Storage) {
 }
 
 func deleteStorage(s Storage) {
-	err := s.Delete(s.GetPath(), s.GetFile())
+	err := s.Delete()
 	if err != nil {
 		log.Fatal(err)
 	}
