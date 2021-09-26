@@ -7,6 +7,7 @@ import (
 	"os"
 	"io"
         "io/ioutil"
+	"errors"
 
         "cloud.google.com/go/storage"
         "google.golang.org/api/iterator"
@@ -18,7 +19,55 @@ type Cloud struct {
 	path string
 }
 
-func (c Cloud) List() {
+func (c *Cloud) SetPath(bucket string) error {
+	for _, l := range bucket {
+		switch {
+		case string(l) == "*":
+			return errors.New("invalid linux path provided with symbol *")
+		case string(l) == "?":
+			return errors.New("invalid linux pfth provided with symbol ?")
+		case string(l) == "\"":
+			return errors.New("invalid linux path provided with symbol \"")
+		}
+	}
+	c.bucket = bucket
+	return nil
+}
+
+func (c *Cloud) SetFile(object string) error {
+        for _, l := range object {
+                switch {
+                case string(l) == "*":
+                        return errors.New("invalid linux filename provided with symbol *")
+                case string(l) == "?":
+                        return errors.New("invalid linux filename provided with symbol ?")
+                case string(l) == "\"":
+                        return errors.New("invalid linux filename provided with symbol \"")
+                case string(l) == "/":
+                        return errors.New("invalid linux filename provided with symbol /")
+                }
+        }
+        c.object = object
+        return nil
+}
+
+func (c *Cloud) SetData(path string) {
+	c.path = path
+}
+
+func (c Cloud) GetPath() string {
+	return c.bucket
+}
+
+func (c Cloud) GetFile() string {
+        return c.object
+}
+
+func (c Cloud) GetData() string {
+	return c.path
+}
+
+func (c Cloud) List(bucket string) {
         ctx := context.Background()
         storageClient, err := storage.NewClient(ctx)
         if err != nil {
@@ -26,8 +75,8 @@ func (c Cloud) List() {
         }
         defer storageClient.Close()
 
-        it := storageClient.Bucket(c.bucket).Objects(ctx, nil)
-	fmt.Printf("List of cloud objects at bucket %s\n", c.bucket)
+        it := storageClient.Bucket(bucket).Objects(ctx, nil)
+	fmt.Printf("List of cloud objects at bucket %s\n", bucket)
 	fmt.Println("--------------------------------")
         for {
                 bucketAttrs, err := it.Next()
@@ -41,7 +90,7 @@ func (c Cloud) List() {
         }
 }
 
-func (c Cloud) Get() ([]byte, error) {
+func (c Cloud) Get(bucket, object string) ([]byte, error) {
 
         ctx := context.Background()
         storageClient, err := storage.NewClient(ctx)
@@ -50,9 +99,9 @@ func (c Cloud) Get() ([]byte, error) {
         }
         defer storageClient.Close()
 
-        rc, err := storageClient.Bucket(c.bucket).Object(c.object).NewReader(ctx)
+        rc, err := storageClient.Bucket(bucket).Object(object).NewReader(ctx)
         if err != nil {
-                return nil, fmt.Errorf("Object(%q).NewReader: %v", c.object, err)
+                return nil, fmt.Errorf("Object(%q).NewReader: %v", object, err)
         }
         defer rc.Close()
 
@@ -60,11 +109,11 @@ func (c Cloud) Get() ([]byte, error) {
         if err != nil {
                 return nil, fmt.Errorf("ioutil.ReadAll: %v", err)
         }
-	fmt.Printf("Data from bucket %s for object %s\n", c.bucket, c.object)
+	fmt.Printf("Data from bucket %s for object %s\n", bucket, object)
         return data, nil
 }
 
-func (c Cloud) Put() error {
+func (c Cloud) Put(bucket, object, path string) error {
         ctx := context.Background()
         storageClient, err := storage.NewClient(ctx)
         if err != nil {
@@ -73,26 +122,26 @@ func (c Cloud) Put() error {
         defer storageClient.Close()
 
         // Open local file.
-        f, err := os.Open(c.path)
+        f, err := os.Open(path)
         if err != nil {
                 return fmt.Errorf("os.Open: %v", err)
         }
         defer f.Close()
 
         // Upload an object with storage.Writer.
-        wc := storageClient.Bucket(c.bucket).Object(c.object).NewWriter(ctx)
+        wc := storageClient.Bucket(bucket).Object(object).NewWriter(ctx)
         if _, err = io.Copy(wc, f); err != nil {
                 return fmt.Errorf("io.Copy: %v", err)
         }
         if err := wc.Close(); err != nil {
                 return fmt.Errorf("Writer.Close: %v", err)
         }
-        fmt.Printf("Object %s uploaded to bucket %s\n", c.object, c.bucket)
+        fmt.Printf("Object %s uploaded to bucket %s\n", object, bucket)
 	fmt.Println("--------------------------------")
         return nil
 }
 
-func (c Cloud) Delete() error {
+func (c Cloud) Delete(bucket, object string) error {
 
         ctx := context.Background()
         storageClient, err := storage.NewClient(ctx)
@@ -101,19 +150,19 @@ func (c Cloud) Delete() error {
         }
         defer storageClient.Close()
 
-        o := storageClient.Bucket(c.bucket).Object(c.object)
+        o := storageClient.Bucket(bucket).Object(object)
         if err := o.Delete(ctx); err != nil {
-                return fmt.Errorf("Object(%q).Delete: %v", c.object, err)
+                return fmt.Errorf("Object(%q).Delete: %v", object, err)
         }
-	fmt.Printf("%s deleted form bucket %s\n", c.object, c.bucket)
+	fmt.Printf("%s deleted form bucket %s\n", object, bucket)
 	fmt.Println("--------------------------------")
         return nil
 }
 
-func newCloud(path, file, data string) Storage {
+func newCloud() Storage {
 	return &Cloud{
-		bucket: path,
-		object: file,
-		path: data,
+		bucket: "lubouski-golang",
+		object: "golang-test-filename.txt",
+		path: "/tmp/golang-test-filename.txt",
 	}
 }
