@@ -15,7 +15,7 @@ This command will produce binary with a name `storage`
 Storage binary is a command line utility. So we need to provide string arguments to it in a appropriate order.
 Example for Linux FS:
 ```
-$ ./storage -provider linux -path /tmp/ -file "my-test-golang.txt" -data "secret data" -command put
+$ ./storage -provider linux -path /tmp/ -file "/tmp/my-test-golang.txt" -data "secret data" -command put
 ```
 Example for Cloud GCP:
 ```

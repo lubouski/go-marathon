@@ -15,7 +15,7 @@ type Local struct {
 }
 
 func (f Local) Put() error {
-	object, err := os.Create(f.path + f.file)
+	object, err := os.Create(f.file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func (f Local) Put() error {
 
 	byteData := []byte(f.data)
 	_, err = object.Write(byteData)
-	fmt.Printf("%s created\n", f.path + f.file)
+	fmt.Printf("%s created\n", f.file)
 	fmt.Println("--------------------------------")
 	return err
 }
@@ -43,13 +43,13 @@ func (f Local) List() {
 }
 
 func (f Local) Get() ([]byte, error) {
-	dat, err := os.ReadFile(f.path + f.file)
+	dat, err := os.ReadFile(f.file)
 	return dat, err
 }
 
 func (f Local) Delete() error {
-	err := os.Remove(f.path + f.file) // remove a single file
-	fmt.Printf("%s deleted at dir %s\n", f.file, f.path)
+	err := os.Remove(f.file) // remove a single file
+	fmt.Printf("%s deleted\n", f.file)
 	fmt.Println("--------------------------------")
 	return err
 }
