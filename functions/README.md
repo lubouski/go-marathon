@@ -50,4 +50,34 @@ Defined type supports the same operators which base type supports.
 i.e (+, -, \*, /, ==, >, <)
 
 
+#### Function Type Declarations
+We could define a function type .
+```
+  type opFuncType func(int, int) int
+```
 
+We can then rewrite the opMap declaration from our example to look like this:
+```
+  var opMap = map[string]opFyncType {
+    // same as in example
+  }
+```
+
+#### Anonymous Functions
+Not only can you assign functions to variables, you can also define new functions within a function and assign them to variables.
+
+```
+  func main() {
+    for i := 0; i < 5; i++ {
+      func(j int) {
+        fmt.Println("printing", j, "from inside anonymoua function")
+      }(i)
+    }
+  }
+```
+
+Just like any other function, an anonymous function is called by using parenthesis. 
+There are two situations where declaring anonymous functions without assigning to variables is useful: `defer` statements and lauching goroutines.
+
+#### Closures
+Functions declared inside of functions are special; they are closures. This is a computer science word that means that functions declared inside of functions are able to access and modify variables declared in the outer function.
