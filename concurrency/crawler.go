@@ -12,8 +12,7 @@ import (
 var wg sync.WaitGroup
 
 func main() {
-//	basedir := "/Users/Aliaksandr_Lubouski/osdu/curl"
-	basedir := "/Users/Aliaksandr_Lubouski/osdu/tmp"
+	basedir := "/Users/Aliaksandr_Lubouski/path/tmp"
 
 	jobs := make(chan map[string]int, 500)
 	crawler(basedir, jobs)
