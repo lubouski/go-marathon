@@ -29,3 +29,47 @@ func main() {
 	}
 }
 ```
+### Static Types
+Define a type like this:
+```
+type item struct {
+  id    int
+  value string
+}
+```
+Then define a method for my type:
+```
+func (i *item) String() string {
+  return i.value
+}
+```
+Then define a function that uses my type:
+```
+func ConcatItems(a item, d item) {
+  return a.String() + b.String()
+}
+```
+Method to create new instances of our type:
+```
+func New(id int, value string) item {  
+  i := item{id, value}
+  return i
+}
+```
+### JSON
+Define how a type should be represented in JSON, then read a JSON string and convert it directly to my type. Validation is automatic.
+```
+type Mission struct {
+  Name     string            `json:"name"`
+  Services []Service         `json:"services"`
+  Stages   []Stage           `json:"stages"`
+  Params   map[string]string `json:"params"`
+  isValid  bool
+}
+func NewFromJSON(jsonString []byte) Mission {
+  var m Mission
+  json.Unmarshal(jsonString, &m)
+  return m
+}
+```
+
