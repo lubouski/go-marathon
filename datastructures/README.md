@@ -93,3 +93,17 @@ Maps are like slices in several ways:
 * Maps are not comparable. You can check if they are equal to nil.
 * The key for a map can be any comparable type. This means you cannot use a slice or a map as the key for a map.
 
+Example of Map of Maps:
+```
+var x = map[string]map[string]string{}
+x["fruits"] = map[string]string{}
+x["colors"] = map[string]string{}
+
+x["fruits"]["a"] = "apple"
+x["fruits"]["b"] = "banana"
+
+x["colors"]["r"] = "red"
+x["colors"]["b"] = "blue"
+
+fmt.Println(x["colors"]["b"]) // outputs blue
+```
