@@ -72,4 +72,17 @@ func NewFromJSON(jsonString []byte) Mission {
   return m
 }
 ```
+### Recursion
+Base case usage, it's where you go down the ladder and have condition for the bottom result i.e base case, and then gradually claimbing the ladder. 
+```
+func main() {
+	fmt.Println(sumNums(10))
+}
 
+func sumNums(n int) int {
+	if n == 1 {
+		return 1
+	}
+	return sumNums(n - 1) + n
+}
+```
