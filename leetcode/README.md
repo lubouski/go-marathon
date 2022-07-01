@@ -86,3 +86,28 @@ func sumNums(n int) int {
 	return sumNums(n - 1) + n
 }
 ```
+
+### LinkedList structure and immutable prepend
+To achieve immutable prepend it's a good technique to use two types of structs: `node` and `linkedList`, the linkedList struct could contain additional handy fields as `length`.
+```
+package main
+
+import "fmt"
+
+type linkedList struct {
+	data int
+	next *linkedList
+}
+
+// Here we can't make prepend immutable, it would be easy if we pass node type and linked it as a new head of linkedList 
+
+func (l *linkedList) prepend(data int) {
+	l.data = data
+}
+
+func main() {
+	mylist := linkedList{}
+	mylist.prepend(100)
+	fmt.Println(mylist)
+}
+```
