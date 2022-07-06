@@ -87,27 +87,29 @@ func sumNums(n int) int {
 }
 ```
 
-### LinkedList structure and immutable prepend
-To achieve immutable prepend it's a good technique to use two types of structs: `node` and `linkedList`, the linkedList struct could contain additional handy fields as `length`.
+### BinaryTree preorder traversal
+In particular case bellow there are two functions, wrapper function `preorderTraversal` is needed to output slice of traversed values.
 ```
-package main
-
-import "fmt"
-
-type linkedList struct {
-	data int
-	next *linkedList
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func preorderTraversal(root *TreeNode) []int {
+    sl := []int{}
+    preorder(root, &sl)
+    return sl
 }
 
-// Here we can't make prepend immutable, it would be easy if we pass node type and linked it as a new head of linkedList 
-
-func (l *linkedList) prepend(data int) {
-	l.data = data
-}
-
-func main() {
-	mylist := linkedList{}
-	mylist.prepend(100)
-	fmt.Println(mylist)
+func preorder(t *TreeNode, sl *[]int) {
+    if t == nil {
+        return
+    }
+    *sl = append(*sl, t.Val)
+    preorder(t.Left, sl)
+    preorder(t.Right, sl)
 }
 ```
