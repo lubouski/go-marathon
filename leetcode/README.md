@@ -113,3 +113,26 @@ func preorder(t *TreeNode, sl *[]int) {
     preorder(t.Right, sl)
 }
 ```
+
+### Remove element from LinkedList
+```
+func removeElements(head *ListNode, val int) *ListNode {
+    // dummy appended Node to help with two pointer (prev and curr)
+    dummy := &ListNode{Next: head}
+    // srt two pointers prev and curr
+    prev, curr := dummy, head
+
+    // iterating over curr to not mess with head
+    for curr != nil {
+        nxt := curr.Next
+        if curr.Val == val {
+            prev.Next = nxt
+        } else {
+            prev = curr
+        }
+    // assigning curr to nxt to iterate over LinkedList
+        curr = nxt
+    }
+    return dummy.Next
+}
+```
