@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: podlister
+  name: podlister
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podlister
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: podlister
+    spec:
+      containers:
+      - image: lubowsky/client-go:podlister-v2
+        name: client-go
+        resources: {}
+status: {}
