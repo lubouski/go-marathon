@@ -7,6 +7,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	appsinformers "k8s.io/client-go/informers/apps/v1"
@@ -81,6 +82,22 @@ func (c *controller) processItem() bool {
 	if err != nil {
 		fmt.Printf("splitting key into namespace and name %s\n", err.Error())
 		return false
+	}
+
+	// we have namespace and name of the object event added to the queue
+	// check if the object has been deleted from API server
+	ctx := context.Background()
+	// deployment is not presented on the cluster any more, and we can't get a name for deleted object like dep.Name
+	_, err = c.clientset.AppsV1().Deployments(ns).Get(ctx, name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		fmt.Printf("handle delete event for deployment %s\n", err.Error())
+		// delete service logic
+		err = c.clientset.CoreV1().Services(ns).Delete(ctx, name, metav1.DeleteOptions{})
+		if err != nil {
+			fmt.Printf("can't delete service %s\n", err.Error())
+			return false
+		}
+		return true
 	}
 
 	err = c.syncDeployment(ns, name)

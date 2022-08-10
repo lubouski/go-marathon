@@ -12,3 +12,31 @@ sharedInformer := cache.NewSharedInformer(lw, &api.Pod{}, resyncPeriod)
 ### Workqueue
 The SharedInformer can't track where each controller is up to (because it's shared), so the controller must provide its own queuing and retrying mechanism (if required). Hence, most Resource Event Handlers simply place items onto a per-consumer workqueue.
 Whenever a resource changes, the Resource Event Handler puts a key to the Workqueue.
+### Controller usecase
+Our controller works outside of the cluster, and it watch `deployments` at namespace `eksposer` and creates or deletes `srv` for every deployment event.
+```
+$ kubectl create ns eksposer
+$ kubectl get svc -n eksposer
+No resources found in eksposer namespace.
+# start controller
+$  ./controllerone
+starting controller
+$ kubectl create deploy nginx --image=nginx -n eksposer
+deployment.apps/nginx created
+# check controller terminal it should have add event
+$ ./controllerone
+starting controller
+add was called
+$ kubectl get svc -n eksposer
+NAME    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+nginx   ClusterIP   10.96.178.94   <none>        80/TCP    86s
+$ kubectl delete deploy nginx -n eksposer
+deployment.apps "nginx" deleted
+$ kubectl get svc -n eksposer
+No resources found in eksposer namespace.
+$ ./controllerone
+starting controller
+add was called
+del was called
+handle delete event for deployment deployments.apps "nginx" not found
+``` 
