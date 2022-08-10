@@ -13,7 +13,7 @@ sharedInformer := cache.NewSharedInformer(lw, &api.Pod{}, resyncPeriod)
 The SharedInformer can't track where each controller is up to (because it's shared), so the controller must provide its own queuing and retrying mechanism (if required). Hence, most Resource Event Handlers simply place items onto a per-consumer workqueue.
 Whenever a resource changes, the Resource Event Handler puts a key to the Workqueue.
 ### Controller usecase
-Our controller works outside of the cluster, and it watch `deployments` at namespace `eksposer` and creates or deletes `srv` for every deployment event.
+Our controller works outside of the cluster, and it watch `deployments` at namespace `eksposer` by default and creates or deletes `srv` for every deployment event.
 ```
 $ kubectl create ns eksposer
 $ kubectl get svc -n eksposer

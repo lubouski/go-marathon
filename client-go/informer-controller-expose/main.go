@@ -32,7 +32,9 @@ func main() {
 	// creating informer for particular namespace (eksposer)
 	// ListOptions could help with restrict the list of returned objects
 	// https://github.com/kubernetes/apimachinery/blob/899984fb2d224c4a86ca7906e38754a3a62f8c41/pkg/apis/meta/v1/types.go#L322
-	informers := informers.NewFilteredSharedInformerFactory(clientset, 10*time.Minute, "eksposer", func(opts *metav1.ListOptions) {})
+	namespace := flag.String("namespace", "eksposer", "namespace to watch for deployments events")
+	flag.Parse()
+	informers := informers.NewFilteredSharedInformerFactory(clientset, 10*time.Minute, *namespace, func(opts *metav1.ListOptions) {})
 	c := newController(clientset, informers.Apps().V1().Deployments())
 	informers.Start(ch)
 	c.run(ch)
