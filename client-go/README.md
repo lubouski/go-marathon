@@ -13,3 +13,7 @@ Why Kubernetes controller has chosen to use events (i.e state changes) to drive 
 The latter is a form of polling. It does not scale well with the number of objects, and the latency of controllers noticing changes depends on the interval of poling and how fast the API server can answer.
 #### Optimistic Concurrency
 In a nutshell that if and when the API server detects concurrent write attempts, it rejects the `latter` of the two write operations. It is then up to the client (controller, scheduler, kubectl, etc) to handle a conflict and potentially retry the write operation.
+#### Kubernetes API - GroupVersionResource and GroupVersionKind
+Resources are always part of an API group and a version, collectively referred to as `GroupVersionResource` (or GVR). A GVR uniquely defines an HTTP path. A concrete path, for example, in the default namespace would be `/api/batch/v1/namespaces/default/jobs`.
+Similarly to GVRs, each `kind` lives in an API group, is versioned, and is identified via a `GroupVersionKind` (GVK).
+GVKs and GVRs are related. GVKs are served under HTTp paths identified by GVRs. The process of mapping a GVK to a GVR is called `REST mapping`.
