@@ -17,3 +17,36 @@ In a nutshell that if and when the API server detects concurrent write attempts,
 Resources are always part of an API group and a version, collectively referred to as `GroupVersionResource` (or GVR). A GVR uniquely defines an HTTP path. A concrete path, for example, in the default namespace would be `/api/batch/v1/namespaces/default/jobs`.
 Similarly to GVRs, each `kind` lives in an API group, is versioned, and is identified via a `GroupVersionKind` (GVK).
 GVKs and GVRs are related. GVKs are served under HTTp paths identified by GVRs. The process of mapping a GVK to a GVR is called `REST mapping`.
+```
+$ kubectl get --raw /apis/batch/v1 | jq
+{
+  "kind": "APIResourceList",
+  "apiVersion": "v1",
+  "groupVersion": "batch/v1",
+  "resources": [
+    {
+      "name": "cronjobs",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "CronJob",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "cj"
+      ],
+      "categories": [
+        "all"
+      ],
+      "storageVersionHash": "sd5LIXh4Fjs="
+    },
+    {
+      "name": "cronjobs/status",
+```
