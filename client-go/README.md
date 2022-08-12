@@ -50,3 +50,5 @@ $ kubectl get --raw /apis/batch/v1 | jq
     {
       "name": "cronjobs/status",
 ```
+### Kubernetes API Machinery
+`k8s.io/apimachinery` in Go includes all the generic building blocks to implement a Kubernetes-like API, and it is not restricted to container management. An important one package is `k8s.io/apimachinery/pkg/apis/meta/v1`. It contains many of the generic API types such as `ObjectMeta`, `TypeMeta`, `GetOptions`, `Status`, and `ListOptions`.
