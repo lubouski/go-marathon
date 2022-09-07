@@ -6,9 +6,10 @@ First we need to download dependencie:
 ```
 $ go get github.com/gorilla/mux
 ```
-Then we could run service with `go run` ro build our code to binary and run it. Additionally there are `flags` which could be provided to service.
+Then we build our code to binary and run it, additionally there are `flags` which could be provided to service.
 ```
-$ go run main.go -filePath "your winemag csv path"
+$ go build 
+$ ./project -filePath "your winemag csv path"
 INFO	2022/08/22 12:23:31 starting server on :8080
 2022/08/22 10:46:50 --> GET /status
 2022/08/22 10:46:50 <-- 200 OK
@@ -55,5 +56,4 @@ terminal2$ curl -s -X PUT -H "Content-Type: application/json" -d '{"contry":"spa
 ]
 ```
 ### Areas of improvement
-First of all, structure of code could be splited to different files component, refactor variables and code logic. Then it is possbile to improve and add http server advanced options for `timeout` for example. Probably there is a better way to implement emit of metrics operation every minute. State of variables between functions could be handled better.
-For live production we could use additional counfiguration options for http server, may be rate limiting. CSV winemag could be downloaded from the web or from S3 bucket to then converted to JSON. It would be a great idea to add more logging for code, and improve comments.
+Probably sync between main web server process and channell reader could be improved, as well as code structure could be enhanced.
