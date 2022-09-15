@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-server
+  namespace: default
+  labels:
+    app: example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1234
+      containers:
+      - name: server
+        image: lubowsky/kafka-reader:v0.1
+        env:
+        - name: PORT
+          value: "9090"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+
