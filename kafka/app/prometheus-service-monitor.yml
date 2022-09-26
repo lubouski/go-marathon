@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: example-service
+  labels:
+    app: example-serivce 
+    purpose: prometheus-prometheus
+spec:
+  selector:
+    matchLabels:
+      run: example-service
+  endpoints:
+  - port: http

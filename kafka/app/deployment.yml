@@ -20,7 +20,9 @@ spec:
         runAsUser: 1234
       containers:
       - name: server
-        image: lubowsky/kafka-reader:v1
+        image: lubowsky/kafka-reader:v2
+        ports:
+        - containerPort: 8090  
         env:
         - name: BROKERS
           value: "kafka-1:9092"

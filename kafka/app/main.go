@@ -8,9 +8,13 @@ import (
 	"syscall"
 	"time"
 	"strings"
+	"net/http"
 
 	"github.com/lovoo/goka"
 	"github.com/lovoo/goka/codec"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -19,6 +23,35 @@ var (
 	topic   goka.Stream = "monitoring"
 	group   goka.Group  = "monitoring-group"
 )
+
+var readCounter = prometheus.NewCounter(
+   prometheus.CounterOpts{
+       Name: "kafka_monitoring_read_request_count",
+       Help: "No of request handled by Read handler",
+   },
+)
+
+var readProcessorError = prometheus.NewCounter(
+   prometheus.CounterOpts{
+       Name: "kafka_monitoring_read_processor_error",
+       Help: "No of request handled by Read handler",
+   },
+)
+
+var writeCounter = prometheus.NewCounter(
+   prometheus.CounterOpts{
+       Name: "kafka_monitoring_write_request_count",
+       Help: "No of request handled by Write handler",
+   },
+)
+
+var writeErrorCounter = prometheus.NewCounter(
+   prometheus.CounterOpts{
+       Name: "kafka_monitoring_write_error_count",
+       Help: "No of request handled by Write handler",
+   },
+)
+
 
 // Emit messages forever every second
 func runEmitter() {
@@ -32,8 +65,10 @@ func runEmitter() {
 	for {
 		time.Sleep(1 * time.Second)
 		err = emitter.EmitSync("some-key", "some-value")
+		writeCounter.Inc()
 		if err != nil {
 			log.Fatalf("error emitting message: %v", err)
+			writeErrorCounter.Inc()
 		}
 	}
 }
@@ -57,6 +92,7 @@ func runProcessor() {
 		// the message's key.
 		ctx.SetValue(counter)
 		log.Printf("key = %s, counter = %v, msg = %v", ctx.Key(), counter, msg)
+		readCounter.Inc()
 	}
 
 	// Define a new processor group. The group defines all inputs, outputs, and
@@ -76,6 +112,7 @@ func runProcessor() {
 		defer close(done)
 		if err = p.Run(ctx); err != nil {
 			log.Fatalf("error running processor: %v", err)
+			readProcessorError.Inc()
 		} else {
 			log.Printf("Processor shutdown cleanly")
 		}
@@ -89,6 +126,12 @@ func runProcessor() {
 }
 
 func main() {
+	prometheus.MustRegister(writeCounter)
+	prometheus.MustRegister(writeErrorCounter)
+	prometheus.MustRegister(readCounter)
+	prometheus.MustRegister(readProcessorError)
 	go runEmitter() // emits one message and stops
-	runProcessor()  // press ctrl-c to stop
+	go runProcessor()  // press ctrl-c to stop
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":8090", nil)
 }
