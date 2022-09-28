@@ -52,11 +52,8 @@ var writeErrorCounter = prometheus.NewCounter(
    },
 )
 
-
 // Emit messages forever every second
 func runEmitter() {
-	brokers = strings.Split(os.Getenv("BROKERS"), ",")
-	topic = goka.Stream(os.Getenv("TOPIC"))
 	emitter, err := goka.NewEmitter(brokers, topic, new(codec.String))
 	if err != nil {
 		log.Fatalf("error creating emitter: %v", err)
@@ -67,8 +64,8 @@ func runEmitter() {
 		err = emitter.EmitSync("some-key", "some-value")
 		writeCounter.Inc()
 		if err != nil {
-			log.Fatalf("error emitting message: %v", err)
 			writeErrorCounter.Inc()
+			log.Printf("error emitting message: %v", err)
 		}
 	}
 }
@@ -77,9 +74,6 @@ func runEmitter() {
 func runProcessor() {
 	// process callback is invoked for each message delivered from
 	// "example-stream" topic.
-	brokers = strings.Split(os.Getenv("BROKERS"), ",")
-	topic = goka.Stream(os.Getenv("TOPIC"))
-	group = goka.Group(os.Getenv("GROUP"))
 	cb := func(ctx goka.Context, msg interface{}) {
 		var counter int64
 		// ctx.Value() gets from the group table the value that is stored for
@@ -111,8 +105,8 @@ func runProcessor() {
 	go func() {
 		defer close(done)
 		if err = p.Run(ctx); err != nil {
-			log.Fatalf("error running processor: %v", err)
 			readProcessorError.Inc()
+			log.Printf("error running processor: %v", err)
 		} else {
 			log.Printf("Processor shutdown cleanly")
 		}
@@ -126,10 +120,15 @@ func runProcessor() {
 }
 
 func main() {
+	brokers = strings.Split(os.Getenv("BROKERS"), ",")
+	topic = goka.Stream(os.Getenv("TOPIC"))
+	group = goka.Group(os.Getenv("GROUP"))
+
 	prometheus.MustRegister(writeCounter)
 	prometheus.MustRegister(writeErrorCounter)
 	prometheus.MustRegister(readCounter)
 	prometheus.MustRegister(readProcessorError)
+
 	go runEmitter() // emits one message and stops
 	go runProcessor()  // press ctrl-c to stop
 	http.Handle("/metrics", promhttp.Handler())
