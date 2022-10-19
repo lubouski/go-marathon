@@ -42,3 +42,33 @@ outer:
 	}
 }
 ```
+#### String iteration optimisation
+Strings in Go are imutable, so every time we traverse string to change some characters, we could create new string and add every character to new string, this is not super efficient, instead we could use `strings` buffer, slice data structure which could grow dynamically.
+```
+package main
+
+import (
+	"fmt"
+	"strings"
+	"unicode"
+)
+
+func main() {
+	str := "My name is Ted"
+	fmt.Println(prepareText(str))
+}
+
+func prepareText(str string) string {
+	var buf strings.Builder
+
+	for _,ch := range str {
+		if unicode.IsUpper(ch) {
+			buf.WriteRune('!')
+			buf.WriteRune(unicode.ToLower(ch))
+		} else {
+			buf.WriteRune(ch)
+		}
+	}
+	return buf.String()
+}
+```
