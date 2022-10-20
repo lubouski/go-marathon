@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"io"
 	"strings"
 	"path/filepath"
 	"errors"
+	"github.com/lubouski/archiver/lib/vlc"
 
 	"github.com/spf13/cobra"
 )
@@ -39,8 +39,8 @@ func pack(_ *cobra.Command, args []string) {
         }
 
 	// data -> Encode(data)
-	packed := ""
-	fmt.Println(string(data)) // TODO: remove
+	// new line appears on created string
+	packed := vlc.Encode(strings.TrimSuffix(string(data),"\n"))
 
 	// save result to file
 	err = os.WriteFile(packedFileName(filePath), []byte(packed), 0644)
