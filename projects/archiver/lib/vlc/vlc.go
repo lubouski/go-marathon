@@ -3,22 +3,7 @@ package vlc
 import (
 	"strings"
 	"unicode"
-	"unicode/utf8"
-	"strconv"
-	"fmt"
 )
-
-type BinaryChunks []BinaryChunk
-
-type BinaryChunk string
-
-type HexChunks []HexChunk
-
-type HexChunk string
-
-type encodingTable map[rune]string
-
-const chunksSize = 8
 
 func Encode(str string) string {
 	// prepare text: M -> !m
@@ -36,88 +21,28 @@ func Encode(str string) string {
 	return chunks.ToHex().ToString()
 }
 
-func (hcs HexChunks) ToString() string {
-	// 2D 30 3C
-	const sep = " "
-
-	switch len(hcs) {
-	case 0:
-		return ""
-	case 1:
-		return string(hcs[0])
-	}
-
-	var buf strings.Builder
-
-	buf.WriteString(string(hcs[0]))
-
-	for _, chunk := range hcs[1:] {
-		buf.WriteString(sep)
-		buf.WriteString(string(chunk))
-	}
-	return buf.String()
-}
-
-func (bcs BinaryChunks) ToHex() HexChunks {
-	res := make(HexChunks, 0, len(bcs))
+func Decode(encodedText string) string {
+	// hex chunks -> binary chunks
+	hChunks := NewHexChunks(encodedText)
 	
-	for _, chunk := range bcs {
-		hexChunk := chunk.ToHex()
-		res = append(res, hexChunk)
-	}
-
-	return res
-}
-
-func (bc BinaryChunk) ToHex() HexChunk {
-	num, err := strconv.ParseUint(string(bc), 2, chunksSize)
-	if err != nil {
-		panic("can't parse binary chunk: " + err.Error())
-	}
-
-	res := strings.ToUpper(fmt.Sprintf("%x", num)) // 2h 3f
-	if len(res) == 1 {
-		res = "0" + res 
-	}
-	return HexChunk(res)
-}
-
-// splitByChunks split binary by chunks
-// i.g.: '100101011001010110010101' -> '10010101 10010101 10010101'
-func splitByChunks(bStr string, chunkSize int) BinaryChunks{
-	strLen := utf8.RuneCountInString(bStr)
-
-	chunksCount := strLen / chunkSize
+	bChunks := hChunks.ToBinary()
 	
-	if strLen / chunkSize !=0 {
-		chunksCount++
-	}
+	// bChunks -> binary string
+	bString := bChunks.Join() 
 
-	res := make(BinaryChunks, 0, chunksCount)
-	var buf strings.Builder
+	// bString (dTree) -> text
+	dTree := getEncodingTable().DecodingTree()
 
-	for i, ch := range bStr {
-		buf.WriteString(string(ch))
-
-		if (i+1) % chunkSize == 0 {
-			res = append(res, BinaryChunk(buf.String()))
-			buf.Reset()
-		}
-	}
 	
-	if buf.Len() != 0 {
-		lastChunk := buf.String()
-		lastChunk += strings.Repeat("0", chunkSize-len(lastChunk))
-		res = append(res, BinaryChunk(lastChunk))
-	}
-	return res
+
+	// return decoded text
+	return exportText(dTree.Decode(bString))
 }
 
 func encodeBin(str string) string {
 	var buf strings.Builder
 
 	for _, ch := range str {
-		fmt.Println(string(ch))
 		buf.WriteString(bin(ch))
 	}
 	return buf.String()
@@ -181,5 +106,27 @@ func prepareText(str string) string {
 			buf.WriteRune(ch)
 		}
 	}
+	return buf.String()
+}
+
+func exportText(str string) string {
+	var buf strings.Builder
+
+	var isCapital bool
+
+	for _,ch := range str {
+		if isCapital {
+			buf.WriteRune(unicode.ToUpper(ch))
+			isCapital = false
+			continue
+		}
+		if ch == '!' {
+			isCapital = true
+			continue
+		} else {
+			buf.WriteRune(ch)
+		}
+	}
+
 	return buf.String()
 }
