@@ -33,6 +33,7 @@ func main() {
 	sr := strings.NewReader(s)
 	counts, err := countLetters(sr) */
 	file, err := os.Open("ioreader.go")
+	defer file.Close()
 	counts, err := countLetters(file)
 	if err != nil {
 		log.Fatal(err)
